@@ -1,0 +1,1876 @@
+{
+  "openapi": "3.0.2",
+  "info": {
+    "title": "Ndock API",
+    "description": "API for Ndock, a food delivery service with restaurants, menus, orders, and delivery functionality",
+    "version": "1.0.0"
+  },
+  "components": {
+    "schemas": {
+      "UserBase": {
+        "type": "object",
+        "properties": {
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "phone_number": {"type": "string"},
+          "address": {"type": "string", "nullable": true}
+        },
+        "required": ["first_name", "last_name", "email", "phone_number"]
+      },
+      "UserLogin": {
+        "type": "object",
+        "properties": {
+          "email": {"type": "string", "format": "email"},
+          "password": {"type": "string"}
+        },
+        "required": ["email", "password"]
+      },
+      "UserCreate": {
+        "type": "object",
+        "properties": {
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "phone_number": {"type": "string"},
+          "address": {"type": "string", "nullable": true},
+          "password": {"type": "string"}
+        },
+        "required": ["first_name", "last_name", "email", "phone_number", "password"]
+      },
+      "RestaurantBase": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "address": {"type": "string"},
+          "phone_number": {"type": "string"},
+          "description": {"type": "string", "nullable": true},
+          "logo_url": {"type": "string", "nullable": true},
+          "banner_url": {"type": "string", "nullable": true},
+          "latitude": {"type": "number", "format": "float"},
+          "longitude": {"type": "number", "format": "float"}
+        },
+        "required": ["name", "address", "phone_number", "latitude", "longitude"]
+      },
+      "RestaurantCreate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "address": {"type": "string"},
+          "phone_number": {"type": "string"},
+          "description": {"type": "string", "nullable": true},
+          "logo_url": {"type": "string", "nullable": true},
+          "banner_url": {"type": "string", "nullable": true},
+          "latitude": {"type": "number", "format": "float"},
+          "longitude": {"type": "number", "format": "float"}
+        },
+        "required": ["name", "address", "phone_number", "latitude", "longitude"]
+      },
+      "RestaurantUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "nullable": true},
+          "address": {"type": "string", "nullable": true},
+          "phone_number": {"type": "string", "nullable": true},
+          "description": {"type": "string", "nullable": true},
+          "logo_url": {"type": "string", "nullable": true},
+          "banner_url": {"type": "string", "nullable": true},
+          "latitude": {"type": "number", "format": "float", "nullable": true},
+          "longitude": {"type": "number", "format": "float", "nullable": true}
+        }
+      },
+      "MenuCategoryBase": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "image_url": {"type": "string", "nullable": true}
+        },
+        "required": ["name"]
+      },
+      "MenuCategoryCreate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "image_url": {"type": "string", "nullable": true}
+        },
+        "required": ["name"]
+      },
+      "MenuCategoryUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "nullable": true},
+          "image_url": {"type": "string", "nullable": true}
+        }
+      },
+      "SupplementBase": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "price": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "preparation_time": {"type": "integer", "default": 0},
+          "image_url": {"type": "string", "nullable": true}
+        },
+        "required": ["name", "price", "description"]
+      },
+      "SupplementCreate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string"},
+          "price": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "preparation_time": {"type": "integer", "default": 0},
+          "image_url": {"type": "string", "nullable": true}
+        },
+        "required": ["name", "price", "description"]
+      },
+      "SupplementUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "nullable": true},
+          "price": {"type": "number", "format": "float", "nullable": true},
+          "description": {"type": "string", "nullable": true},
+          "preparation_time": {"type": "integer", "nullable": true},
+          "image_url": {"type": "string", "nullable": true}
+        }
+      },
+      "MenuBase": {
+        "type": "object",
+        "properties": {
+          "restaurant_id": {"type": "integer"},
+          "name": {"type": "string"},
+          "price": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "preparation_time": {"type": "integer"},
+          "image_url": {"type": "string", "nullable": true}
+        },
+        "required": ["restaurant_id", "name", "price", "description", "preparation_time"]
+      },
+      "MenuCreate": {
+        "type": "object",
+        "properties": {
+          "restaurant_id": {"type": "integer"},
+          "name": {"type": "string"},
+          "price": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "preparation_time": {"type": "integer"},
+          "image_url": {"type": "string", "nullable": true},
+          "category_ids": {"type": "array", "items": {"type": "integer"}},
+          "supplement_ids": {"type": "array", "items": {"type": "integer"}, "nullable": true}
+        },
+        "required": ["restaurant_id", "name", "price", "description", "preparation_time", "category_ids"]
+      },
+      "MenuUpdate": {
+        "type": "object",
+        "properties": {
+          "name": {"type": "string", "nullable": true},
+          "price": {"type": "number", "format": "float", "nullable": true},
+          "description": {"type": "string", "nullable": true},
+          "preparation_time": {"type": "integer", "nullable": true},
+          "category_ids": {"type": "array", "items": {"type": "integer"}, "nullable": true},
+          "supplement_ids": {"type": "array", "items": {"type": "integer"}, "nullable": true},
+          "image_url": {"type": "string", "nullable": true}
+        }
+      },
+      "CommentBase": {
+        "type": "object",
+        "properties": {
+          "comment": {"type": "string"},
+          "rating": {"type": "integer", "minimum": 1, "maximum": 5}
+        },
+        "required": ["comment", "rating"]
+      },
+      "CommentCreate": {
+        "type": "object",
+        "properties": {
+          "comment": {"type": "string"},
+          "rating": {"type": "integer", "minimum": 1, "maximum": 5},
+          "menu_id": {"type": "integer"},
+          "client_id": {"type": "integer"}
+        },
+        "required": ["comment", "rating", "menu_id", "client_id"]
+      },
+      "CommentUpdate": {
+        "type": "object",
+        "properties": {
+          "comment": {"type": "string", "nullable": true},
+          "rating": {"type": "integer", "minimum": 1, "maximum": 5, "nullable": true}
+        }
+      },
+      "LocationCoordinates": {
+        "type": "object",
+        "properties": {
+          "latitude": {"type": "number", "format": "float", "minimum": -90, "maximum": 90},
+          "longitude": {"type": "number", "format": "float", "minimum": -180, "maximum": 180},
+          "address": {"type": "string"}
+        },
+        "required": ["latitude", "longitude", "address"]
+      },
+      "PreOrderEstimateRequest": {
+        "type": "object",
+        "properties": {
+          "restaurant_id": {"type": "integer"},
+          "delivery_location": {"$ref": "#/components/schemas/LocationCoordinates"},
+          "menu_items": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "integer"
+            }
+          }
+        },
+        "required": ["restaurant_id", "delivery_location", "menu_items"]
+      },
+      "Supplement": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "price": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "preparation_time": {"type": "integer"},
+          "image_url": {"type": "string", "nullable": true},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "SupplementList": {
+        "type": "array",
+        "items": {"$ref": "#/components/schemas/Supplement"}
+      },
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "first_name": {"type": "string"},
+          "last_name": {"type": "string"},
+          "email": {"type": "string", "format": "email"},
+          "phone_number": {"type": "string"},
+          "address": {"type": "string"},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "TokenData": {
+        "type": "object",
+        "properties": {
+          "access_token": {"type": "string"},
+          "token_type": {"type": "string", "default": "bearer"}
+        }
+      },
+      "Restaurant": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "address": {"type": "string"},
+          "phone_number": {"type": "string"},
+          "description": {"type": "string", "nullable": true},
+          "logo_url": {"type": "string", "nullable": true},
+          "banner_url": {"type": "string", "nullable": true},
+          "latitude": {"type": "number", "format": "float"},
+          "longitude": {"type": "number", "format": "float"},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "RestaurantList": {
+        "type": "array",
+        "items": {"$ref": "#/components/schemas/Restaurant"}
+      },
+      "MenuCategory": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "name": {"type": "string"},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "MenuCategoryList": {
+        "type": "array",
+        "items": {"$ref": "#/components/schemas/MenuCategory"}
+      },
+      "Menu": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "restaurant_id": {"type": "integer"},
+          "category_ids": {"type": "array", "items": {"type": "integer"}},
+          "supplement_ids": {"type": "array", "items": {"type": "integer"}},
+          "name": {"type": "string"},
+          "price": {"type": "number", "format": "float"},
+          "description": {"type": "string"},
+          "preparation_time": {"type": "integer"},
+          "image_url": {"type": "string", "nullable": true},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"},
+          "categories": {"type": "array", "items": {"$ref": "#/components/schemas/MenuCategory"}},
+          "supplements": {"type": "array", "items": {"$ref": "#/components/schemas/Supplement"}}
+        }
+      },
+      "MenuList": {
+        "type": "array",
+        "items": {"$ref": "#/components/schemas/Menu"}
+      },
+      "OrderItemSupplement": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "order_item_id": {"type": "integer"},
+          "supplement_id": {"type": "integer"},
+          "quantity": {"type": "integer"},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "OrderItemSupplementCreate": {
+        "type": "object",
+        "properties": {
+          "supplement_id": {"type": "integer"},
+          "quantity": {"type": "integer"}
+        },
+        "required": ["supplement_id", "quantity"]
+      },
+      "OrderItem": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "order_id": {"type": "integer"},
+          "menu_id": {"type": "integer"},
+          "quantity": {"type": "integer"},
+          "supplements": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/OrderItemSupplement"},
+            "default": []
+          },
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "OrderItemCreate": {
+        "type": "object",
+        "properties": {
+          "menu_id": {"type": "integer"},
+          "quantity": {"type": "integer"},
+          "supplements": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/OrderItemSupplementCreate"},
+            "default": []
+          }
+        },
+        "required": ["menu_id", "quantity"]
+      },
+      "OrderCreate": {
+        "type": "object",
+        "properties": {
+          "client_id": {"type": "integer"},
+          "items": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/OrderItemCreate"}
+          }
+        },
+        "required": ["client_id", "items"]
+      },
+      "Order": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "client_id": {"type": "integer"},
+          "items": {
+            "type": "array",
+            "items": {"$ref": "#/components/schemas/OrderItem"}
+          },
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "OrderList": {
+        "type": "array",
+        "items": {"$ref": "#/components/schemas/Order"}
+      },
+      "Comment": {
+        "type": "object",
+        "properties": {
+          "id": {"type": "integer"},
+          "menu_id": {"type": "integer"},
+          "client_id": {"type": "integer"},
+          "comment": {"type": "string"},
+          "rating": {"type": "integer", "minimum": 1, "maximum": 5},
+          "created_at": {"type": "string", "format": "date-time"},
+          "updated_at": {"type": "string", "format": "date-time"}
+        }
+      },
+      "CommentList": {
+        "type": "array",
+        "items": {"$ref": "#/components/schemas/Comment"}
+      },
+      "MenuRating": {
+        "type": "object",
+        "properties": {
+          "menu_id": {"type": "integer"},
+          "average_rating": {"type": "number", "format": "float"},
+          "total_reviews": {"type": "integer"}
+        }
+      },
+      "HealthCheck": {
+        "type": "object",
+        "properties": {
+          "status": {"type": "string"},
+          "database": {"type": "string"}
+        }
+      },
+      "EstimateResponse": {
+        "type": "object",
+        "properties": {
+          "restaurant_name": {"type": "string"},
+          "restaurant_address": {"type": "string"},
+          "delivery_address": {"type": "string"},
+          "distance_km": {"type": "number", "format": "float"},
+          "preparation_time_minutes": {"type": "integer"},
+          "estimated_delivery_duration_minutes": {"type": "number", "format": "float"},
+          "total_estimated_time_minutes": {"type": "number", "format": "float"},
+          "estimated_delivery_time": {"type": "string", "format": "date-time"},
+          "total_order_price": {"type": "number", "format": "float"}
+        }
+      }
+    }
+  },
+  "paths": {
+    "/health": {
+      "get": {
+        "tags": ["health"],
+        "summary": "Health check endpoint for monitoring",
+        "description": "Checks if the application is running and can connect to the database",
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HealthCheck"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants": {
+      "post": {
+        "tags": ["restaurants"],
+        "summary": "Create a new restaurant",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestaurantCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Restaurant created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restaurant"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      },
+      "get": {
+        "tags": ["restaurants"],
+        "summary": "List all restaurants",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "description": "Number of records to skip",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of records to return",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of restaurants",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/RestaurantList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/restaurants/{restaurant_id}": {
+      "get": {
+        "tags": ["restaurants"],
+        "summary": "Get a specific restaurant by ID",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restaurant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["restaurants"],
+        "summary": "Update a specific restaurant",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/RestaurantUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Restaurant updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Restaurant"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["restaurants"],
+        "summary": "Delete a specific restaurant",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Restaurant deleted successfully"
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      }
+    },
+    "/restaurants/{restaurant_id}/menus": {
+      "get": {
+        "tags": ["menus"],
+        "summary": "Get all menu items for a specific restaurant",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of menu items for the restaurant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      }
+    },
+    "/restaurants/{restaurant_id}/orders": {
+      "get": {
+        "tags": ["orders"],
+        "summary": "Get all orders for a specific restaurant",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of orders for the restaurant",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      }
+    },
+    "/menus": {
+      "post": {
+        "tags": ["menus"],
+        "summary": "Create a new menu item",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Menu item created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Menu"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error"
+          },
+          "404": {
+            "description": "Restaurant or category not found"
+          }
+        }
+      },
+      "get": {
+        "tags": ["menus"],
+        "summary": "List all menu items",
+        "parameters": [
+          {
+            "name": "restaurant_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of menu items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/menus/quick-service": {
+      "get": {
+        "tags": ["menus"],
+        "summary": "Get menu items with preparation time less than a specified value",
+        "parameters": [
+          {
+            "name": "max_preparation_time",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 30
+            }
+          },
+          {
+            "name": "restaurant_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of quick-service menu items",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/menus/most-rated": {
+      "get": {
+        "tags": ["menus"],
+        "summary": "Get menu items ordered by their average rating (highest first)",
+        "description": "Retrieves menus ordered by their average rating in descending order",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "description": "Number of records to skip",
+            "schema": {
+              "type": "integer",
+              "default": 0,
+              "minimum": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "description": "Maximum number of records to return",
+            "schema": {
+              "type": "integer",
+              "default": 100,
+              "maximum": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of menu items ordered by rating",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/menus/{menu_id}": {
+      "get": {
+        "tags": ["menus"],
+        "summary": "Get a specific menu item by ID",
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu item details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Menu"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["menus"],
+        "summary": "Update a specific menu item",
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Menu item updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Menu"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error"
+          },
+          "404": {
+            "description": "Menu item or category not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["menus"],
+        "summary": "Delete a specific menu item",
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Menu item deleted successfully"
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    },
+    "/menus/{menu_id}/comments": {
+      "get": {
+        "tags": ["comments"],
+        "summary": "Get all comments for a specific menu item",
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          },
+          {
+            "name": "min_rating",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments for the menu item",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    },
+    "/menus/{menu_id}/rating": {
+      "get": {
+        "tags": ["comments"],
+        "summary": "Get the average rating and total number of reviews for a specific menu item",
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Rating information",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuRating"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    },
+    "/orders": {
+      "post": {
+        "tags": ["orders"],
+        "summary": "Create a new order",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/OrderCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Order created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error"
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    },
+    "/orders/{order_id}": {
+      "get": {
+        "tags": ["orders"],
+        "summary": "Get a specific order by ID",
+        "parameters": [
+          {
+            "name": "order_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Order"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        }
+      }
+    },
+    "/users/{user_id}/orders": {
+      "get": {
+        "tags": ["orders"],
+        "summary": "Get all orders for a specific user",
+        "parameters": [
+          {
+            "name": "user_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of orders for the user",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/OrderList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/comments": {
+      "post": {
+        "tags": ["comments"],
+        "summary": "Create a new comment",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Comment created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error"
+          },
+          "404": {
+            "description": "Menu item or user not found"
+          }
+        }
+      },
+      "get": {
+        "tags": ["comments"],
+        "summary": "List all comments",
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "client_id",
+            "in": "query",
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "rating",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "minimum": 1,
+              "maximum": 5
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of comments",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/CommentList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/comments/{comment_id}": {
+      "get": {
+        "tags": ["comments"],
+        "summary": "Get a specific comment by ID",
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Comment details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["comments"],
+        "summary": "Update a specific comment",
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CommentUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Comment updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Comment"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["comments"],
+        "summary": "Delete a specific comment",
+        "parameters": [
+          {
+            "name": "comment_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Comment deleted successfully"
+          },
+          "404": {
+            "description": "Comment not found"
+          }
+        }
+      }
+    },
+    "/delivery-estimate": {
+      "post": {
+        "tags": ["deliveries"],
+        "summary": "Calculate estimated delivery time and cost",
+        "description": "Calculate estimated delivery time and cost before creating an order. Takes into account restaurant location, delivery location, menu items and quantities, preparation times, and bicycle routing time.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PreOrderEstimateRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Delivery estimate",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/EstimateResponse"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error"
+          },
+          "404": {
+            "description": "Restaurant or menu item not found"
+          },
+          "503": {
+            "description": "Routing service error"
+          }
+        }
+      }
+    },
+    "/menu-categories": {
+      "post": {
+        "tags": ["menu-categories"],
+        "summary": "Create a new menu category",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuCategoryCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Menu category created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuCategory"
+                }
+              }
+            }
+          }
+        }
+      },
+      "get": {
+        "tags": ["menu-categories"],
+        "summary": "List all menu categories",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of menu categories",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuCategoryList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/menu-categories/{category_id}": {
+      "get": {
+        "tags": ["menu-categories"],
+        "summary": "Get a specific menu category by ID",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu category details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuCategory"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu category not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["menu-categories"],
+        "summary": "Update a specific menu category",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/MenuCategoryUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Menu category updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuCategory"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu category not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["menu-categories"],
+        "summary": "Delete a specific menu category",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Menu category deleted successfully"
+          },
+          "404": {
+            "description": "Menu category not found"
+          },
+          "400": {
+            "description": "Cannot delete category that is in use"
+          }
+        }
+      }
+    },
+    "/menu-categories/{category_id}/menus": {
+      "get": {
+        "tags": ["menu-categories"],
+        "summary": "Get all menus for a specific category",
+        "parameters": [
+          {
+            "name": "category_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of menus for the category",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/MenuList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu category not found"
+          }
+        }
+      }
+    },
+    "/supplements": {
+      "post": {
+        "tags": ["supplements"],
+        "summary": "Create a new supplement",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplementCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Supplement created successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supplement"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad request - validation error"
+          }
+        }
+      },
+      "get": {
+        "tags": ["supplements"],
+        "summary": "List all supplements",
+        "parameters": [
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of supplements",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplementList"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/supplements/{supplement_id}": {
+      "get": {
+        "tags": ["supplements"],
+        "summary": "Get a specific supplement by ID",
+        "parameters": [
+          {
+            "name": "supplement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Supplement details",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supplement"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplement not found"
+          }
+        }
+      },
+      "put": {
+        "tags": ["supplements"],
+        "summary": "Update a specific supplement",
+        "parameters": [
+          {
+            "name": "supplement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SupplementUpdate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Supplement updated successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Supplement"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Supplement not found"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["supplements"],
+        "summary": "Delete a specific supplement",
+        "parameters": [
+          {
+            "name": "supplement_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "204": {
+            "description": "Supplement deleted successfully"
+          },
+          "404": {
+            "description": "Supplement not found"
+          },
+          "400": {
+            "description": "Cannot delete supplement that is in use by menus"
+          }
+        }
+      }
+    },
+    "/menus/{menu_id}/supplements": {
+      "get": {
+        "tags": ["supplements"],
+        "summary": "Get all supplements for a specific menu",
+        "parameters": [
+          {
+            "name": "menu_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer"
+            }
+          },
+          {
+            "name": "skip",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 0
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "schema": {
+              "type": "integer",
+              "default": 100
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "List of supplements for the menu",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SupplementList"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Menu not found"
+          }
+        }
+      }
+    },
+    "/auth/register": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Register a new user",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserCreate"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "User registered successfully",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/User"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Email already registered"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    },
+    "/auth/login": {
+      "post": {
+        "tags": ["authentication"],
+        "summary": "Login a user and get an access token",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UserLogin"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful, returns access token",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TokenData"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Incorrect email or password"
+          },
+          "500": {
+            "description": "Internal server error"
+          }
+        }
+      }
+    }
+  }
+}
